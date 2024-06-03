@@ -34,6 +34,8 @@ volatile unsigned int overflow_count_sec = 0;
 volatile unsigned int weight_flag = 0;
 volatile unsigned int TT = 0;
 volatile unsigned int Speed = 0;
+volatile unsigned int RemainingTime = 0;
+
 void putstring(char* str);
 
 void timer0_init(){
@@ -147,9 +149,13 @@ int main(void)
 						weight_after = weight;
 						weight_change = weight_after - weight_before;
 						Speed = weight_change/60;
+						RemainingTime = weight/ Speed;						
 						putstring("Speed = ");
 						putchar1_TX_int(Speed);
 						putstring(" g/sec \n");
+						putstring("Time Remaining : ");
+						putchar1_TX_int(RemainingTime);
+						putstring(" sec \n");
 						weight_flag = 0;
 					}
 			}
