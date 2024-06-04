@@ -50,11 +50,11 @@ ISR(TIMER0_OVF_vect){ //오버플로우 인터럽트가 걸릴 때마다 실행�
 		overflow_count++;
 		if(overflow_count >= 61.27){ 
 			overflow_count_sec++; //1초의 시간이 흘렀다
-			TimeForSpeed = overflow_count_sec - TT*60;
+			TimeForSpeed = overflow_count_sec - TT*10;			
 			overflow_count = 0; // 초기화시켜주기
-			if(overflow_count_sec >= 61){
-				TT = TT+1;
-				TimeForSpeed = 0;
+			if(TimeForSpeed > 10){
+				TT += 1;
+				
 			}
 		}
 	}
@@ -144,12 +144,31 @@ int main(void)
 				weight_before = weight;
 				weight_flag = 1;
 			}
-			if(weight_flag == 1){
-				if(TimeForSpeed == 60){
+			if(weight_flag == 1 && TimeForSpeed == 10){
 						weight_after = weight;
-						weight_change = weight_after - weight_before;
-						Speed = weight_change/60;
-						RemainingTime = weight/ Speed;						
+						weight_change = weight_before - weight_after;
+						Speed = weight_change/10;
+						RemainingTime = weight/ Speed;
+
+						// Debugging messages
+						putstring("Debug: TimeForSpeed = ");
+						putchar1_TX_int(TimeForSpeed);
+						putstring("\n");
+
+						putstring("Debug: weight_before = ");
+						putchar1_TX_int(weight_before);
+						putstring("\n");
+
+						putstring("Debug: weight_after = ");
+						putchar1_TX_int(weight_after);
+						putstring("\n");
+
+						putstring("Debug: weight_change = ");
+						putchar1_TX_int(weight_change);
+						putstring("\n");
+						
+						
+						//sending speed, time remaining						
 						putstring("Speed = ");
 						putchar1_TX_int(Speed);
 						putstring(" g/sec \n");
@@ -158,7 +177,7 @@ int main(void)
 						putstring(" sec \n");
 						weight_flag = 0;
 					}
-			}
+			
 			
 		}
 						
@@ -176,9 +195,9 @@ int main(void)
 		}
 
 
+
 		weight = ReadCout() / 4;
 		weight = (unsigned long)(weight * calibration_factor);
-		weight_before = weight;
 		
 		putchar1_TX_int(weight);
 		putchar1('\r');
